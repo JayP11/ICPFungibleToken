@@ -1,0 +1,42 @@
+{
+  "canisters": {
+    "token": {
+      "type": "custom",
+      "build": [
+        "cargo build --target wasm32-unknown-unknown --release --package token"
+      ],
+      "candid": "src/token/token.did",
+      "wasm": "target/wasm32-unknown-unknown/release/token.wasm"
+    },
+    "frontend": {
+      "type": "assets",
+      "source": ["src/frontend/build"],
+      "build": [
+        "cd src/frontend && npm install && npm run build"
+      ]
+    }
+  },
+  "defaults": {
+    "build": {
+      "packtool": "",
+      "args": ""
+    },
+    "canister_http": {
+      "enabled": false
+    },
+    "proguard": {
+      "enabled": false
+    },
+    "rust": {
+      "args": ""
+    }
+  },
+  "dfx": "0.15.0",
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+} 
