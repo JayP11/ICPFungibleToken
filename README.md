@@ -2,6 +2,12 @@
 
 This project implements a fungible token on the Internet Computer Protocol (ICP) using the ICRC-1 and ICRC-2 standards.
 
+## 🌐 Live Demo
+
+**GitHub Pages**: [https://jayp11.github.io/ICPFungibleToken](https://jayp11.github.io/ICPFungibleToken)
+
+The live demo showcases the token's frontend interface where you can interact with the ICP token directly in your browser.
+
 ## Features
 
 - **ICRC-1 Compliant**: Implements the standard fungible token interface
@@ -123,7 +129,12 @@ dfx canister call token icrc2_transfer_from '(record { spender_subaccount = null
 TokenCreation/
 ├── dfx.json              # DFX configuration
 ├── Cargo.toml            # Workspace Cargo configuration
+├── .github/workflows/    # GitHub Actions workflows
 ├── src/
+│   ├── frontend/         # React frontend application
+│   │   ├── src/          # React source code
+│   │   ├── public/       # Static assets
+│   │   └── package.json  # Frontend dependencies
 │   └── token/
 │       ├── Cargo.toml    # Token canister dependencies
 │       ├── token.did     # Candid interface definition
@@ -181,6 +192,27 @@ Metadata {
 - Check the [Internet Computer documentation](https://internetcomputer.org/docs)
 - Review the [ICRC-1 specification](https://github.com/dfinity/ICRC-1)
 - Consult the [DFX documentation](https://internetcomputer.org/docs/current/developer-docs/setup/install/)
+
+## Deployment
+
+### GitHub Pages
+
+This project is automatically deployed to GitHub Pages. The deployment process:
+
+1. **Automatic Deployment**: Every push to the `main` branch triggers an automatic deployment
+2. **Manual Deployment**: You can also deploy manually by running:
+   ```bash
+   cd src/frontend
+   npm run deploy
+   ```
+
+### Local Development
+
+To run the frontend locally:
+```bash
+cd src/frontend
+npm start
+```
 
 ## License
 
