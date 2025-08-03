@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/ICPFungibleToken/static/css/main.1f1d1d81.css",
+    "main.js": "/ICPFungibleToken/static/js/main.3674f7ba.js",
+    "index.html": "/ICPFungibleToken/index.html",
+    "main.1f1d1d81.css.map": "/ICPFungibleToken/static/css/main.1f1d1d81.css.map",
+    "main.3674f7ba.js.map": "/ICPFungibleToken/static/js/main.3674f7ba.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1f1d1d81.css",
+    "static/js/main.3674f7ba.js"
+  ]
+}
