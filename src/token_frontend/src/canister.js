@@ -2,8 +2,8 @@ import { Actor, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 import { idlFactory } from "./token_backend.did.js";
 
-// Hardcode the correct canister ID for local development
-const BACKEND_CANISTER_ID = "uxrrr-q7777-77774-qaaaq-cai";
+// Hardcode the correct canister ID for playground deployment
+const BACKEND_CANISTER_ID = "mdwwn-niaaa-aaaab-qabta-cai";
 
 // Add unique timestamp for debugging and cache busting
 const BUILD_TIMESTAMP = Date.now() + Math.random();

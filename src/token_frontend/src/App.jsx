@@ -1962,7 +1962,18 @@ function App() {
 
         {activeTab === "balances" && (
           <section className="balances-section">
-            <h2>Your Token Balances</h2>
+            <div className="balances-header">
+              <h2>Your Token Balances</h2>
+              <button
+                onClick={() => {
+                  loadTokens();
+                  setTimeout(() => loadBalances(), 1000);
+                }}
+                className="refresh-button"
+              >
+                🔄 Refresh
+              </button>
+            </div>
 
             {dataLoading ? (
               <div className="loading-indicator">

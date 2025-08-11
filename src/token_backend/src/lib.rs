@@ -34,6 +34,16 @@ fn init(){
     }
 }
 
+#[ic_cdk::post_upgrade]
+fn post_upgrade(){
+    ic_cdk::println!("post_upgrade running");
+    unsafe{
+        if TOKENS.is_none() {
+            TOKENS = Some(HashMap::new());
+        }
+    }
+}
+
 #[ic_cdk::update]
 fn create_token(token_owner:Principal, name:String, symbol: String, image_url:String,total_supply:u64)->bool{
     // let creater = ownerr;
@@ -81,39 +91,40 @@ fn create_token(token_owner:Principal, name:String, symbol: String, image_url:St
 fn transfer(symbol:String, to:Principal,from:Principal, amount: u64) ->bool{
     let sender = from;
     unsafe{
-        let tokens = TOKENS.as_mut().unwrap();
-        if let Some(token) = tokens.get_mut(&symbol){
-            let sender_balance = token.balances.entry(sender).or_insert(0);
-            if *sender_balance < amount{
-                return false;
+        if let Some(tokens) = TOKENS.as_mut() {
+            if let Some(token) = tokens.get_mut(&symbol){
+                let sender_balance = token.balances.entry(sender).or_insert(0);
+                if *sender_balance < amount{
+                    return false;
+                }
+
+                *sender_balance -= amount;
+                let receiver_balance = token.balances.entry(to).or_insert(0);
+                *receiver_balance +=amount;
+
+                let tx = Transaction{
+                    from:Some(sender),
+                    to,
+                    amount,
+                    timestamp:ic_cdk::api::time(),
+                };
+                token.transaction.entry(sender).or_default().push(tx.clone());
+                token.transaction.entry(to).or_default().push(tx);
+
+                return true;
             }
-
-            *sender_balance -= amount;
-            let receiver_balance = token.balances.entry(to).or_insert(0);
-            *receiver_balance +=amount;
-
-            let tx = Transaction{
-                from:Some(sender),
-                to,
-                amount,
-                timestamp:ic_cdk::api::time(),
-            };
-            token.transaction.entry(sender).or_default().push(tx.clone());
-            token.transaction.entry(to).or_default().push(tx);
-
-            return true;
-            
         }
     }
     false
-
 }
 
 #[ic_cdk::query]
 fn balance_of(symbol: String, user:Principal) -> u64{
     unsafe{
-        if let Some(token) = TOKENS.as_ref().unwrap().get(&symbol){
-            return *token.balances.get(&user).unwrap_or(&0);
+        if let Some(tokens) = TOKENS.as_ref() {
+            if let Some(token) = tokens.get(&symbol){
+                return *token.balances.get(&user).unwrap_or(&0);
+            }
         }
     }
     0
@@ -122,8 +133,10 @@ fn balance_of(symbol: String, user:Principal) -> u64{
 #[ic_cdk::query]
 fn total_supply(symbol:String)-> u64{
     unsafe{
-        if let Some(token) = TOKENS.as_ref().unwrap().get(&symbol){
-            return token.total_supply;
+        if let Some(tokens) = TOKENS.as_ref() {
+            if let Some(token) = tokens.get(&symbol){
+                return token.total_supply;
+            }
         }
     }
     0
@@ -132,21 +145,27 @@ fn total_supply(symbol:String)-> u64{
 #[ic_cdk::query]
 fn get_token_list() -> Vec<(String,String,String)>{
     unsafe{
-        TOKENS.as_ref().unwrap().iter().map(|(_,Token)|{
-            (
-                Token.name.clone(),
-                Token.symbol.clone(),
-                Token.image_url.clone(),
-            )
-        }).collect()
+        if let Some(tokens) = TOKENS.as_ref() {
+            tokens.iter().map(|(_,Token)|{
+                (
+                    Token.name.clone(),
+                    Token.symbol.clone(),
+                    Token.image_url.clone(),
+                )
+            }).collect()
+        } else {
+            vec![]
+        }
     }
 }
 
 #[ic_cdk::query]
 fn get_transactions(symbol:String, user:Principal)-> Vec<Transaction>{
     unsafe{
-        if let Some(token)= TOKENS.as_ref().unwrap().get(&symbol){
-            return token.transaction.get(&user).cloned().unwrap_or_default();
+        if let Some(tokens) = TOKENS.as_ref() {
+            if let Some(token)= tokens.get(&symbol){
+                return token.transaction.get(&user).cloned().unwrap_or_default();
+            }
         }
     }
     vec![]
