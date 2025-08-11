@@ -1,0 +1,27 @@
+{
+  "name": "token_frontend",
+  "version": "1.0.0",
+  "description": "Token platform frontend",
+  "main": "index.js",
+  "scripts": {
+    "build": "vite build",
+    "start": "vite",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@dfinity/agent": "^0.15.6",
+    "@dfinity/auth-client": "^0.15.6",
+    "@dfinity/identity": "^0.15.6",
+    "@dfinity/principal": "^0.15.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^4.4.0"
+  },
+  "type": "module"
+}

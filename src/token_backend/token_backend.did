@@ -1,0 +1,14 @@
+type Transaction = record {
+  to : principal;
+  from : opt principal;
+  timestamp : nat64;
+  amount : nat64;
+};
+service : () -> {
+  balance_of : (text, principal) -> (nat64) query;
+  create_token : (principal, text, text, text, nat64) -> (bool);
+  get_token_list : () -> (vec record { text; text; text }) query;
+  get_transactions : (text, principal) -> (vec Transaction) query;
+  total_supply : (text) -> (nat64) query;
+  transfer : (text, principal, principal, nat64) -> (bool);
+}
