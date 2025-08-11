@@ -481,6 +481,7 @@ function App() {
 
   // Development mode authentication (bypasses Internet Identity for local testing)
   const handleDevLogin = async () => {
+    console.log("=== DEV LOGIN BUTTON CLICKED ===");
     setAuthLoading(true);
     try {
       console.log("=== STARTING DEV AUTHENTICATION ===");
@@ -537,6 +538,7 @@ function App() {
 
   // Real Internet Identity authentication
   const handleLogin = async () => {
+    console.log("=== LOGIN BUTTON CLICKED ===");
     setAuthLoading(true);
     try {
       console.log("=== STARTING AUTHENTICATION ===");
@@ -807,16 +809,8 @@ function App() {
   // Check authentication status on mount
   useEffect(() => {
     let isMounted = true;
-    let hasRun = false;
 
     const checkAuthStatus = async () => {
-      // Prevent multiple executions
-      if (hasRun) {
-        console.log("Auth check already running, skipping...");
-        return;
-      }
-      hasRun = true;
-
       console.log("=== CHECKING AUTH STATUS ===");
       console.log("Current authentication state:", {
         isAuthenticated,
@@ -838,12 +832,10 @@ function App() {
         // Check localStorage for stored authentication
         const storedAuth = localStorage.getItem("ic-auth");
         const storedPrincipal = localStorage.getItem("ic-principal");
-        const storedTimestamp = localStorage.getItem("ic-tokens-timestamp");
 
         console.log("Stored auth data:", {
           auth: storedAuth,
           principal: storedPrincipal,
-          timestamp: storedTimestamp,
         });
 
         if (storedAuth && storedPrincipal) {
@@ -860,48 +852,25 @@ function App() {
             console.log("Stored authentication restored successfully");
           } catch (error) {
             console.error("Error checking existing identity:", error);
-          }
-
-          // If we get here, try manual restoration with timeout
-          console.log("Attempting manual restoration with timeout...");
-          setTimeout(async () => {
-            if (!isMounted) return;
-
-            try {
-              console.log("Timeout restoration attempt...");
-              const success = await restoreCanisterActor(storedPrincipal);
-
-              if (!success) {
-                throw new Error("Failed to restore canister actor");
-              }
-
-              console.log("Timeout restoration successful");
-            } catch (error) {
-              console.error("Fallback restoration failed:", error);
-              // Clear localStorage if restoration fails
-              localStorage.removeItem("ic-auth");
-              localStorage.removeItem("ic-principal");
-              localStorage.removeItem("ic-tokens");
-              localStorage.removeItem("ic-tokens-timestamp");
-              if (isMounted) {
-                addNotification(
-                  "Failed to restore session, please login again",
-                  "error"
-                );
-              }
-            } finally {
-              if (isMounted) setDataLoading(false);
+            // Clear localStorage if restoration fails
+            localStorage.removeItem("ic-auth");
+            localStorage.removeItem("ic-principal");
+            if (isMounted) {
+              addNotification(
+                "Failed to restore session, please login again",
+                "error"
+              );
             }
-          }, 1000);
+          }
         } else {
           console.log("No stored authentication found");
-          if (isMounted) setDataLoading(false);
         }
       } catch (error) {
         console.error("Error checking auth status:", error);
-        if (isMounted) setDataLoading(false);
         if (isMounted)
           addNotification("Error checking authentication status", "error");
+      } finally {
+        if (isMounted) setDataLoading(false);
       }
     };
 
@@ -1616,7 +1585,49 @@ function App() {
 
       <header className="app-header">
         <div className="header-content">
-          <h1>🌐 ICP Token Platform</h1>
+          <div className="logo-section">
+            <div className="logo-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="16" cy="16" r="16" fill="url(#logoGradient)" />
+                <path
+                  d="M8 16C8 11.5817 11.5817 8 16 8C20.4183 8 24 11.5817 24 16C24 20.4183 20.4183 24 16 24C11.5817 24 8 20.4183 8 16Z"
+                  fill="white"
+                  fillOpacity="0.1"
+                />
+                <path
+                  d="M16 10C12.6863 10 10 12.6863 10 16C10 19.3137 12.6863 22 16 22C19.3137 22 22 19.3137 22 16C22 12.6863 19.3137 10 16 10Z"
+                  fill="white"
+                  fillOpacity="0.2"
+                />
+                <circle cx="16" cy="16" r="4" fill="white" />
+                <path
+                  d="M16 12C13.7909 12 12 13.7909 12 16C12 18.2091 13.7909 20 16 20C18.2091 20 20 18.2091 20 16C20 13.7909 18.2091 12 16 12Z"
+                  fill="url(#logoGradient)"
+                />
+              </svg>
+              <defs>
+                <linearGradient
+                  id="logoGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stopColor="#4facfe" />
+                  <stop offset="100%" stopColor="#667eea" />
+                </linearGradient>
+              </defs>
+            </div>
+            <h2 className="logo-text">
+              <span className="logo-brand">ICP TOKEN PLATFORM</span>
+            </h2>
+          </div>
           <div className="user-info">
             <div className="user-principal">
               <span className="principal-label">Principal:</span>
